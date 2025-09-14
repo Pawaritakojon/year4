@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="th" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ป้อนข้อมูลวางแผนการเงิน - Finance App</title>
+
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{
+            font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+            background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%);
+            color:#2c3e50;line-height:1.6;min-height:100vh;
+        }
+
+        /* ระยะเผื่อให้พ้น header fixed จาก fragment */
+        .header-placeholder{height:70px}
+
+        /* ===== FORM ===== */
+        .container{max-width:800px;margin:0 auto;padding:40px 20px}
+        .page-title{text-align:center;margin-bottom:50px}
+        .page-title h1{font-size:2.5rem;font-weight:300;color:#2c3e50;margin-bottom:15px}
+        .page-title p{color:#7f8c8d;font-size:1.1rem}
+        .form-container{background:rgba(255,255,255,.95);backdrop-filter:blur(10px);
+            border-radius:25px;box-shadow:0 20px 40px rgba(0,0,0,.1);
+            padding:50px;animation:slideInUp .8s ease;}
+        .form-row{display:grid;grid-template-columns:1fr 1fr;gap:25px;margin-bottom:25px}
+        .form-group{position:relative;margin-bottom:25px}
+        .form-group.full-width{grid-column:1/-1}
+        .form-group input{width:100%;padding:18px 20px;border:2px solid #e8e8e8;border-radius:15px;
+            font-size:16px;background:#f8f9fa;transition:all .3s ease;color:#333}
+        .form-group label{position:absolute;left:18px;top:50%;transform:translateY(-50%);
+            color:#95a5a6;font-size:16px;transition:all .2s ease;pointer-events:none}
+        .form-group input:focus{outline:none;border-color:#3498db;background:#fff}
+        .form-group input:focus+label,
+        .form-group input:not(:placeholder-shown)+label{
+            top:0;transform:translateY(-50%);left:14px;font-size:12px;color:#3498db;
+            background:#fff;padding:0 6px;}
+        .form-group input::placeholder{color:#999;font-size:14px}
+
+        .submit-btn{width:100%;padding:18px;background:linear-gradient(135deg,#27ae60,#2ecc71);
+            color:white;border:none;border-radius:15px;font-size:18px;font-weight:600;
+            cursor:pointer;transition:all .3s ease;margin-top:20px;position:relative;overflow:hidden}
+        .submit-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+            background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);
+            transition:left .5s ease}
+        .submit-btn:hover::before{left:100%}
+        .submit-btn:hover{transform:translateY(-3px);box-shadow:0 15px 30px rgba(39,174,96,.35)}
+        .submit-btn:active{transform:translateY(-1px)}
+
+        .info-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+            gap:25px;margin-top:40px}
+        .info-card{background:linear-gradient(135deg,#3498db 0%,#2980b9 100%);color:white;
+            padding:25px;border-radius:20px;text-align:center;transition:all .3s ease}
+        .info-card:hover{transform:translateY(-5px);box-shadow:0 15px 30px rgba(52,152,219,.35)}
+        .info-card h3{font-size:1.2rem;margin-bottom:10px;font-weight:600}
+        .info-card p{font-size:.9rem;opacity:.9;line-height:1.5}
+
+        .progress-bar{width:100%;height:6px;background:#e8e8e8;border-radius:3px;
+            margin-bottom:30px;overflow:hidden}
+        .progress-fill{height:100%;background:linear-gradient(90deg,#27ae60,#2ecc71);
+            width:0%;transition:width .5s ease;border-radius:3px}
+
+        @keyframes slideInUp{from{opacity:0;transform:translateY(50px)}to{opacity:1;transform:translateY(0)}}
+        @media(max-width:768px){.form-row{grid-template-columns:1fr}.form-container{padding:30px 20px}.page-title h1{font-size:2rem}.info-cards{grid-template-columns:1fr}}
+        @media(max-width:480px){.container{padding:20px 15px}.form-container{padding:25px 15px}.page-title h1{font-size:1.8rem}}
+    </style>
+</head>
+<body>
+
+<!-- ✅ เรียกใช้ HAMBURGER FRAGMENT และส่ง page='caluserinfo' -->
+<div th:replace="~{hamburger :: hamburger('caluserinfo')}"></div>
+
+<!-- กันพื้นที่ใต้ header -->
+<div class="header-placeholder"></div>
+
+<div class="container">
+    <div class="page-title">
+        <h1>วางแผนการเงินของคุณ</h1>
+        <p>กรอกข้อมูลเพื่อคำนวณแผนการเงินที่เหมาะสม</p>
+    </div>
+
+    <div class="form-container">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+        <div th:if="${param.msg != null and param.msg[0] == 'pleaseInput'}"
+             style="background:#fff3cd;color:#856404;border:1px solid #ffeeba;border-radius:10px;padding:12px 16px;margin-bottom:16px;">
+            กรุณากรอกข้อมูลก่อนจึงจะดูผลการวางแผนได้
+        </div>
+
+        <form action="/caluserinfo" method="post" id="financialForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <input type="text" id="firstName" name="firstName" placeholder=" " required>
+                    <label for="firstName">ชื่อจริง</label>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="lastName" name="lastName" placeholder=" " required>
+                    <label for="lastName">นามสกุล</label>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <input type="number" id="age" name="age" placeholder=" " min="18" max="100" required>
+                    <label for="age">อายุ (ปี)</label>
+                </div>
+                <div class="form-group">
+                    <input type="number" id="salary" name="salary" placeholder=" " min="0" step="1000" required>
+                    <label for="salary">เงินเดือน (บาท)</label>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <input type="number" id="retirementAge" name="retirementAge" placeholder=" " min="45" max="80" required>
+                    <label for="retirementAge">อายุเกษียณ (ปี)</label>
+                </div>
+                <div class="form-group">
+                    <input type="number" id="desiredRetirementAmount" name="desiredRetirementAmount" placeholder=" " min="0" step="100000" required>
+                    <label for="desiredRetirementAmount">จำนวนเงินที่อยากมีหลังเกษียณ (บาท)</label>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn"><span>คำนวณแผนการเงิน</span></button>
+        </form>
+
+        <div class="info-cards">
+            <div class="info-card"><h3>เงินเดือน</h3><p>กรอกเงินเดือนปัจจุบันเพื่อคำนวณความสามารถในการออม</p></div>
+            <div class="info-card"><h3>เป้าหมาย</h3><p>กำหนดเป้าหมายทางการเงินที่ต้องการบรรลุเมื่อเกษียณ</p></div>
+            <div class="info-card"><h3>การคำนวณ</h3><p>ระบบจะคำนวณโดยคำนึงถึงเงินเฟ้อและระยะเวลาที่เหลือ</p></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // progress bar
+    function updateProgress(){
+        const inputs=document.querySelectorAll('input[required]');
+        const filled=[...inputs].filter(i=>i.value.trim()!=='');
+        document.getElementById('progressFill').style.width=(filled.length/inputs.length*100)+'%';
+    }
+    document.querySelectorAll('input[required]').forEach(i=>{
+        i.addEventListener('input',updateProgress);
+        i.addEventListener('blur',updateProgress);
+    });
+
+    document.getElementById('financialForm').addEventListener('submit',function(e){
+        e.preventDefault();
+        const d=Object.fromEntries(new FormData(this));
+        if(d.age<18||d.age>100){alert('กรุณากรอกอายุระหว่าง 18-100 ปี');return;}
+        if(+d.retirementAge<=+d.age){alert('อายุเกษียณต้องมากกว่าอายุปัจจุบัน');return;}
+        if(d.salary<=0){alert('กรุณากรอกเงินเดือนที่ถูกต้อง');return;}
+        if(d.desiredRetirementAmount<=0){alert('กรุณากรอกจำนวนเงินเป้าหมายที่ถูกต้อง');return;}
+        this.submit();
+    });
+
+    document.querySelectorAll('input').forEach(i=>{
+        i.addEventListener('focus',()=>i.style.transform='scale(1.02)');
+        i.addEventListener('blur',()=>i.style.transform='scale(1)');
+    });
+    updateProgress();
+</script>
+</body>
+</html>

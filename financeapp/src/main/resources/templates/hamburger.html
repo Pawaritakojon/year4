@@ -1,0 +1,126 @@
+<!-- templates/hamburger.html -->
+<header class="header" id="header" th:fragment="hamburger(page)">
+    <nav class="nav-container" role="navigation" aria-label="เมนูหลัก">
+        <a th:href="@{/home}" class="logo">
+            <div class="logo-icon">F</div>
+            <h1>Finance App</h1>
+        </a>
+
+        <!-- ปุ่ม Hamburger -->
+        <button class="mobile-menu-btn" id="mobileMenuBtn"
+                aria-label="เปิด/ปิดเมนู" aria-controls="sidebar" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
+    </nav>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <!-- ปุ่มปิดเมนู -->
+        <button class="close-btn" onclick="closeMenu()">✖ ปิด</button>
+        <ul>
+            <li><a th:href="@{/home}"          class="link" th:classappend="${page}=='home' ? ' active' : ''">หน้าแรก</a></li>
+            <li><a th:href="@{/caluserinfo}"   class="link" th:classappend="${page}=='caluserinfo' ? ' active' : ''">ป้อนข้อมูลวางแผนการเงิน</a></li>
+            <li><a th:href="@{/exchange}"      class="link" th:classappend="${page}=='exchange' ? ' active' : ''">อัตราแลกเปลี่ยน</a></li>
+            <li><a th:href="@{/ourinfo}"       class="link" th:classappend="${page}=='ourinfo' ? ' active' : ''">เกี่ยวกับเรา</a></li>
+            <li>
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="link logout-btn">ออกจากระบบ</button>
+                </form>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay" aria-hidden="true"></div>
+
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body.no-scroll{overflow:hidden}
+        /* ปุ่ม Logout */
+        .logout-btn {
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            padding: 14px 20px;
+            font-weight: 500;
+            color: #c0392b;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #fceaea;
+            color: #e74c3c;
+        }
+
+        .header{
+            background:rgba(255,255,255,.95);backdrop-filter:blur(10px);
+            box-shadow:0 2px 20px rgba(0,0,0,.1);
+            position:fixed;top:0;left:0;right:0;z-index:1000;transition:all .3s ease;
+        }
+        .nav-container{display:flex;align-items:center;justify-content:space-between;height:70px;padding:0 20px}
+        .logo{display:flex;align-items:center;text-decoration:none}
+        .logo h1{color:#2c3e50;font-size:22px;margin-left:10px}
+        .logo-icon{width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,#3498db,#2980b9);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold}
+
+        .mobile-menu-btn{display:flex;flex-direction:column;cursor:pointer;padding:8px;border:1px solid #2c3e50;border-radius:6px;background:#fff}
+        .mobile-menu-btn span{width:26px;height:3px;background:#2c3e50;margin:4px 0;border-radius:2px;transition:.3s ease}
+        .mobile-menu-btn.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+        .mobile-menu-btn.active span:nth-child(2){opacity:0}
+        .mobile-menu-btn.active span:nth-child(3){transform:rotate(-45deg) translate(6px,-6px)}
+
+        /* Sidebar */
+        .sidebar{
+            position:fixed;top:0;right:-260px;bottom:0;width:260px;background:#fff;
+            box-shadow:2px 0 10px rgba(0,0,0,.1);transition:right .3s ease;
+            z-index:999;padding-top:70px
+        }
+        .sidebar.active{right:0}
+
+        .sidebar .close-btn{
+            background:none;border:none;font-size:18px;font-weight:bold;
+            padding:12px 20px;text-align:left;cursor:pointer;width:100%;color:#2c3e50
+        }
+        .sidebar .close-btn:hover{background:#f1f1f1;color:#e74c3c}
+
+        .sidebar ul{list-style:none}
+        .sidebar a.link{display:block;padding:14px 20px;text-decoration:none;color:#2c3e50;font-weight:500;transition:.2s ease}
+        .sidebar a.link:hover{background:#f1f1f1;color:#3498db}
+        .sidebar a.link.active{color:#3498db;font-weight:600}
+
+        .overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;z-index:998}
+        .overlay.show{display:block}
+    </style>
+
+    <script>
+        (function(){
+            const btn = document.getElementById('mobileMenuBtn');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+
+            window.closeMenu = function(){
+                btn.classList.remove('active');
+                sidebar.classList.remove('active');
+                overlay.classList.remove('show');
+                btn.setAttribute('aria-expanded','false');
+                document.body.classList.remove('no-scroll');
+            }
+
+            function openMenu(){
+                btn.classList.add('active');
+                sidebar.classList.add('active');
+                overlay.classList.add('show');
+                btn.setAttribute('aria-expanded','true');
+                document.body.classList.add('no-scroll');
+            }
+
+            btn.addEventListener('click', () => {
+                sidebar.classList.contains('active') ? closeMenu() : openMenu();
+            });
+            overlay.addEventListener('click', closeMenu);
+            document.querySelectorAll('#sidebar a.link').forEach(a => a.addEventListener('click', closeMenu));
+        })();
+    </script>
+</header>

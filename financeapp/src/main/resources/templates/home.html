@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="th" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>หน้าแรก - Finance App</title>
+
+    <!-- ✅ เก็บเฉพาะสไตล์ของหน้า (ลบสไตล์เมนู/เฮดเดอร์ออก) -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        /* ====== HERO & FEATURES (หน้าเพจเท่านั้น) ====== */
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 100px 20px 50px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content { max-width: 800px; z-index: 2; }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 300;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: #7f8c8d;
+            margin-bottom: 40px;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .cta-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .cta-btn.primary { background: linear-gradient(135deg, #3498db, #2980b9); color: #fff; }
+        .cta-btn.secondary { background: transparent; color: #3498db; border: 2px solid #3498db; }
+        .cta-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(52,152,219,0.3); }
+
+        .features-section { padding: 100px 20px; background: #fff; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .section-title { text-align: center; font-size: 2.5rem; font-weight: 300; margin-bottom: 60px; color: #2c3e50; }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .feature-card {
+            background: #fff;
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid #f0f0f0;
+        }
+        .feature-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); }
+
+        .feature-icon {
+            width: 80px; height: 80px; background: linear-gradient(135deg, #3498db, #2980b9);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 25px; color: #fff; font-size: 32px;
+        }
+        .feature-title { font-size: 1.5rem; font-weight: 600; margin-bottom: 15px; color: #2c3e50; }
+        .feature-description { color: #7f8c8d; line-height: 1.6; }
+
+        .floating-shapes { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+        .shape { position: absolute; background: rgba(52, 152, 219, 0.1); border-radius: 50%; animation: float 6s ease-in-out infinite; }
+        .shape:nth-child(1){ width:100px;height:100px; top:20%; left:10%; animation-delay:0s; }
+        .shape:nth-child(2){ width:150px;height:150px; top:60%; right:10%; animation-delay:2s; }
+        .shape:nth-child(3){ width:80px;height:80px; bottom:20%; left:20%; animation-delay:4s; }
+
+        @keyframes float { 0%,100%{transform:translateY(0) rotate(0)} 50%{transform:translateY(-20px) rotate(180deg)} }
+        @keyframes fadeInUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem; }
+            .hero-subtitle { font-size: 1.1rem; }
+            .cta-buttons { flex-direction: column; align-items: center; }
+            .cta-btn { width: 250px; }
+            .features-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title { font-size: 2rem; }
+            .section-title { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{hamburger :: hamburger('home')}"></div>
+
+
+<!-- ====== เนื้อหาหน้า Home ====== -->
+<section class="hero-section">
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="hero-content">
+        <h1 class="hero-title">ยินดีต้อนรับสู่ Finance App</h1>
+        <p class="hero-subtitle">แอปพลิเคชันวางแผนการเงินที่ช่วยให้คุณบรรลุเป้าหมายทางการเงินได้อย่างชาญฉลาด</p>
+
+        <div class="cta-buttons">
+            <a th:href="@{/caluserinfo}" class="cta-btn primary">เริ่มวางแผนการเงิน</a>
+            <a th:href="@{/exchange}" class="cta-btn secondary">ดูอัตราแลกเปลี่ยน</a>
+        </div>
+    </div>
+</section>
+
+<section class="features-section">
+    <div class="container">
+        <h2 class="section-title">ฟีเจอร์หลัก</h2>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">FP</div>
+                <h3 class="feature-title">วางแผนการเงิน</h3>
+                <p class="feature-description">คำนวณและวางแผนการเงินสำหรับอนาคต โดยคำนึงถึงเงินเฟ้อและเป้าหมายทางการเงินของคุณ</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">FX</div>
+                <h3 class="feature-title">ติดตามอัตราแลกเปลี่ยน</h3>
+                <p class="feature-description">ติดตามอัตราแลกเปลี่ยนสกุลเงินต่างๆ แบบเรียลไทม์ เพื่อการตัดสินใจทางการเงินที่แม่นยำ</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">TA</div>
+                <h3 class="feature-title">วิเคราะห์เป้าหมาย</h3>
+                <p class="feature-description">วิเคราะห์เป้าหมายทางการเงินและคำนวณจำนวนเงินที่ต้องออมในแต่ละเดือนเพื่อบรรลุเป้าหมาย</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">INF</div>
+                <h3 class="feature-title">คำนวณเงินเฟ้อ</h3>
+                <p class="feature-description">คำนวณผลกระทบของเงินเฟ้อต่อเป้าหมายทางการเงินในอนาคต เพื่อการวางแผนที่แม่นยำ</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">UX</div>
+                <h3 class="feature-title">ใช้งานง่าย</h3>
+                <p class="feature-description">อินเตอร์เฟซที่ใช้งานง่าย เข้าใจได้ทันที เหมาะสำหรับทุกคนที่ต้องการวางแผนการเงิน</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">SEC</div>
+                <h3 class="feature-title">ปลอดภัย</h3>
+                <p class="feature-description">ข้อมูลของคุณจะถูกเก็บรักษาอย่างปลอดภัย และไม่ถูกแชร์กับบุคคลที่สาม</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ✅ สคริปต์ของหน้า (ไม่ยุ่งกับเมนู—เมนูอยู่ใน fragment แล้ว) -->
+<script>
+    // Scroll animations
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+    document.querySelectorAll('.feature-card').forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        card.style.transition = 'all 0.6s ease';
+        observer.observe(card);
+    });
+
+    // Parallax shapes
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (!reduced.matches) {
+        window.addEventListener('scroll', () => {
+            const y = window.pageYOffset;
+            document.querySelectorAll('.shape').forEach((shape, idx) => {
+                const speed = 0.5 + (idx * 0.1);
+                shape.style.transform = `translateY(${y * speed}px) rotate(${y * 0.1}deg)`;
+            });
+        }, { passive: true });
+    }
+</script>
+</body>
+</html>
