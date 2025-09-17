@@ -19,6 +19,14 @@ public class UserInfo {
     private Integer retirementAge;
     private Double desiredRetirementAmount;
 
+    // ✅ ฟิลด์ใหม่
+    // ถ้าจะยังไม่เพิ่มคอลัมน์ใน DB ให้เปลี่ยนเป็น @Transient
+    @Column(name = "social_security_input", nullable = true)
+    private Double socialSecurityInput;   // บาท/เดือน
+
+    @Column(name = "provident_fund_input", nullable = true)
+    private Double providentFundInput;    // บาท/เดือน
+
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
